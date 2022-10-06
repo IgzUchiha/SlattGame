@@ -4,6 +4,7 @@ from food import Food
 from scoreboard import Scoreboard
 import time
 from web3 import Web3
+from wallet import Wallet
 from tkinter import *
 import webbrowser
 
@@ -14,12 +15,13 @@ def click():
 
 web3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/d7ba549ef43b443d8ddb7f1fb9d10d9f'))
 # print(web3.isConnected())
+
 balance = web3.eth.get_balance('0xC5A66758501De57Cd39EC8087dc4b4BEB8Cbb117')
 print(balance)
 print(web3.eth.blockNumber)
 screen = Screen()
 screen.setup(width=700, height=700)
-screen.bgcolor("red")
+screen.bgcolor("black")
 screen.title("My SLATT Game")
 screen.tracer(0)
 button = Button(text='Connect Meta Mask')
@@ -29,8 +31,7 @@ button.pack()
 webbrowser.open_new("https://metamask.io")
 
 
-
-
+wallet = Wallet('0xC5A66758501De57Cd39EC8087dc4b4BEB8Cbb117', round(web3.fromWei(balance, "ether"), 4))
 snake = Snake()
 food = Food()
 scoreboard = Scoreboard()
@@ -45,8 +46,14 @@ game_is_on = True
 
 while game_is_on:
     screen.update()
+    wallet.goto(300,300)
+    wallet.write(f"Balance: {wallet.balance} ETH", align='right')
+    # scoreboard.write(f"Address {wallet.address}")
+    wallet.goto(-100, 300)
+    wallet.write(f"Address: {wallet.address}", align='right')
     time.sleep(0.1)
     snake.move()
+
 
     # Detect Collision With Food
     if snake.head.distance(food) < 15:
